@@ -1,0 +1,466 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Family Health & Pharmacy Tracker API",
+    "description": "Professional API documentation for managing medicines inventory in Laravel.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://127.0.0.1:8000/api",
+      "description": "Local Laravel Development Server"
+    }
+  ],
+  "paths": {
+    "/medicines": {
+      "get": {
+        "summary": "Get All Medicines or Filter by Category.",
+        "description": "Retrieve a list of all medicines. Optionally filter by category query parameter.",
+        "operationId": "getMedicinesList",
+        "tags": ["Medicines"],
+        "parameters": [
+          {
+            "name": "category",
+            "in": "query",
+            "required": false,
+            "description": "Filter medicines by category (e.g., Painkillers, Antibiotics, Vitamins, First Aid)",
+            "schema": {
+              "type": "string",
+              "example": "Painkillers"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation, returns array of medicines",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Medicine"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Add a New Medicine.",
+        "description": "Store a newly created medicine in the database inventory.",
+        "operationId": "storeMedicine",
+        "tags": ["Medicines"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MedicineInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Medicine created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Medicine added successfully"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Medicine"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/medicines/company/{company}": {
+      "get": {
+        "summary": "Get Medicines by Company Name.",
+        "description": "Fetch all medicines belonging to a specific company using its name.",
+        "operationId": "getMedicinesByCompany",
+        "tags": ["Medicines"],
+        "parameters": [
+          {
+            "name": "company",
+            "in": "path",
+            "required": true,
+            "description": "Name of the company (e.g., Novartis, GSK)",
+            "schema": {
+              "type": "string",
+              "example": "Novartis"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Medicines found successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Medicine"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No medicines found for this company error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "error"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "No medicines found for this company"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/medicines/{id}": {
+      "get": {
+        "summary": "Get Single Medicine by ID.",
+        "description": "Fetch a specific medicine using its ID. Returns 404 if not found.",
+        "operationId": "getMedicineById",
+        "tags": ["Medicines"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Primary key ID of the medicine",
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Medicine found successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Medicine"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Medicine not found error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "error"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Medicine not found"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update OR Replace Complete Medicine Record.",
+        "description": "Update an existing medicine entirely using its ID.",
+        "operationId": "updateMedicinePut",
+        "tags": ["Medicines"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Primary key ID of the medicine to update",
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MedicineInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Medicine updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Medicine updated successfully"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Medicine"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Medicine not found error"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update Specific Medicine Field.",
+        "description": "Partially update an existing medicine's fields (e.g., only stock or price) using its ID.",
+        "operationId": "updateMedicinePatch",
+        "tags": ["Medicines"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Primary key ID of the medicine to patch",
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string", "example": "Panadol Extra" },
+                  "category": { "type": "string", "example": "Painkillers" },
+                  "company": { "type": "string", "example": "GSK" },
+                  "price": { "type": "number", "example": 280.00 },
+                  "stock": { "type": "integer", "example": 120 },
+                  "expiry_date": { "type": "string", "format": "date", "example": "2026-12-31" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Medicine patched successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Medicine updated successfully"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Medicine"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Medicine not found error"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a Medicine.",
+        "description": "Remove a specific medicine from the inventory using its ID.",
+        "operationId": "deleteMedicine",
+        "tags": ["Medicines"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Primary key ID of the medicine to delete",
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Medicine deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Medicine deleted successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Medicine not found error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "error"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Medicine not found"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Medicine": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "example": "Panadol"
+          },
+          "category": {
+            "type": "string",
+            "example": "Painkillers"
+          },
+          "company": {
+            "type": "string",
+            "example": "GSK"
+          },
+          "price": {
+            "type": "number",
+            "example": 250.00
+          },
+          "stock": {
+            "type": "integer",
+            "example": 100
+          },
+          "expiry_date": {
+            "type": "string",
+            "format": "date",
+            "example": "2026-12-31"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-01-01T00:00:00.000000Z"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-01-01T00:00:00.000000Z"
+          }
+        }
+      },
+      "MedicineInput": {
+        "type": "object",
+        "required": ["name", "category", "company", "price", "stock", "expiry_date"],
+        "properties": {
+          "name": { "type": "string", "example": "Brufen" },
+          "category": { "type": "string", "example": "Painkillers" },
+          "company": { "type": "string", "example": "Abbott" },
+          "price": { "type": "number", "example": 150.00 },
+          "stock": { "type": "integer", "example": 50 },
+          "expiry_date": { "type": "string", "format": "date", "example": "2027-12-31" }
+        }
+      }
+    }
+  }
+}
