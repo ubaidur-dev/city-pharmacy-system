@@ -78,10 +78,16 @@ class MedicineController
 
     public function stockAlertsView()
     {
-        $lowStockMedicines = Medicine::where('stock', '<', 10)->get();
+        // Empty Stock (Stock is exactly 0)
+        $emptyStockMedicines = Medicine::where('stock', 0)->get();
+
+        // Low Stock (Stock is greater than 0 but less than 10)
+        $lowStockMedicines = Medicine::where('stock', '>', 0)->where('stock', '<', 10)->get();
+
+        // Expiring Soon (Next 3 Months)
         $expiringMedicines = Medicine::where('expiry_date', '<=', now()->addMonths(3))->get();
 
-        return view('stock-alerts', compact('lowStockMedicines', 'expiringMedicines'));
+        return view('stock-alerts', compact('emptyStockMedicines', 'lowStockMedicines', 'expiringMedicines'));
     }
 
     public function salesBillingView()

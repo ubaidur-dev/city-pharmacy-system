@@ -97,6 +97,50 @@
         }
       }
     },
+    "/medicines/company/{company}": {
+      "get": {
+        "summary": "Get Medicines by Company",
+        "description": "Retrieve a list of medicines filtered by the company name.",
+        "operationId": "getMedicinesByCompany",
+        "tags": ["Medicines"],
+        "parameters": [
+          {
+            "name": "company",
+            "in": "path",
+            "required": true,
+            "description": "Pharmaceutical company name",
+            "schema": {
+              "type": "string",
+              "example": "GSK"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation, returns array of medicines",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Medicine"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/medicines/{id}": {
       "get": {
         "summary": "Get Single Medicine by ID",
@@ -154,6 +198,169 @@
                 }
               }
             }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update Existing Medicine (Full)",
+        "description": "Update all details of an existing medicine record.",
+        "operationId": "updateMedicinePut",
+        "tags": ["Medicines"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Primary key ID of the medicine",
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MedicineInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Medicine updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Medicine updated successfully"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Medicine"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Medicine not found"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update Existing Medicine (Partial)",
+        "description": "Partially update details of an existing medicine record.",
+        "operationId": "updateMedicinePatch",
+        "tags": ["Medicines"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Primary key ID of the medicine",
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string", "example": "Brufen" },
+                  "category": { "type": "string", "example": "Painkillers" },
+                  "company": { "type": "string", "example": "Abbott" },
+                  "price": { "type": "number", "example": 150.00 },
+                  "stock": { "type": "integer", "example": 50 },
+                  "expiry_date": { "type": "string", "format": "date", "example": "2027-12-31" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Medicine updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Medicine updated successfully"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Medicine"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Medicine not found"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a Medicine",
+        "description": "Remove a medicine record from the inventory by its ID.",
+        "operationId": "deleteMedicine",
+        "tags": ["Medicines"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Primary key ID of the medicine",
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Medicine deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Medicine deleted successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Medicine not found"
           }
         }
       }
